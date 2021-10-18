@@ -111,7 +111,7 @@ function App() {
             { rmBoardShow ? 
             <RmOperationBoard />
             :
-            <video src="20181229093311.mp4" width="500" height="300" controls></video> 
+            <video src="demo.mov" width="500" height="300" controls></video> 
              }
           </Col>
           <Col sm={2} style={{'background-color': '#8F793A', "border":"1px solid"}}>头像头像头像</Col>
