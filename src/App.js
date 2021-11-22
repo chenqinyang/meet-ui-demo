@@ -1,9 +1,20 @@
-import logo from './logo.svg';
 import './App.css';
-import { Button, Alert, Table, Container, Row, Col } from 'react-bootstrap';
+import { Button, Table, Container } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
+import PdfReader from './PdfReader'
+
+function requestApi() {
+  return fetch('/test/wealth-common-gateway/finfit/questionnaire', {
+    header: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=utf-8'
+    }
+  }).then(res => {
+    return res.json()
+  })
+}
 
 function UpdateSuccessPopup(props) {
   return (
@@ -39,9 +50,6 @@ function RmOperationBoard (props) {
 
   return (
     <>
-      <Alert variant={'success'}>
-        This is a demo of table.
-      </Alert>
         {/* Table content with button and click simple js function */}
 
         <Table striped bordered hover variant="dark">
@@ -85,51 +93,35 @@ function RmOperationBoard (props) {
  
 function App() {
 
+  const pdfDocs = [
+    {name: 'pdf document 1', value: 'pdf00001'},
+    {name: 'pdf document 2', value: 'pdf00002'},
+    {name: 'pdf document 3', value: 'pdf00003'}
+  ];
   const [rmBoardShow, setRmBoardShow] = useState(false);
+  const [dataStr, setDataStr] = useState('');
+  const [docid, setDocid] = useState('');
+
+  useLayoutEffect(() => {
+    async function fetchData() {
+      const res = await requestApi();
+      setDataStr(JSON.stringify(res));
+    }
+    fetchData();
+  }, []);
 
   return (
     <div className="App">
-      {/* <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header> */}
-
-      <>
       <Container>
-        <Row>
-          <Col sm={10}>
-            { rmBoardShow ? 
-            <RmOperationBoard />
-            :
-            <video src="demo.mov" width="500" height="300" controls></video> 
-             }
-          </Col>
-          <Col sm={2} style={{'background-color': '#8F793A', "border":"1px solid"}}>头像头像头像</Col>
-        </Row>
-        <Row>
-          <Col style={{'background-color': '#8F793A', "border":"1px solid", "height": "50px", "margin-top": "5px"}}>
-            操作面板 &nbsp;&nbsp;
-            { !rmBoardShow ? <Button variant="danger" onClick={() => setRmBoardShow(true)}>换操作页面</Button>
-            : 
-            <Button variant="danger" onClick={() => setRmBoardShow(false)}>换投屏</Button>
-            }
-          </Col>
-        </Row>
+        <section>
+          <h2>request api result</h2>
+          <p>{dataStr}</p>
+        </section>
+        <ul>
+          {pdfDocs.map(doc => <li key={doc.value} onClick={() => setDocid(doc.value)}>{doc.name}</li>)}
+        </ul>
+        <PdfReader docid={docid} width={1200} height={800}/>
       </Container>
-
-      
-      </>
-      
     </div>
   );
 }
